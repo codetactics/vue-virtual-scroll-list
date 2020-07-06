@@ -92,7 +92,7 @@ export default class Virtual {
     this.sizes.set(id, size)
 
     // we assume size type is fixed at the beginning and remember first size value
-    // if there is no size value different from this at next comming saving
+    // if there is no size value different from this at next coming saving
     // we think it's a fixed size list, otherwise is dynamic size list
     if (this.calcType === CALC_TYPE.INIT) {
       this.fixedSizeValue = size
@@ -116,7 +116,7 @@ export default class Virtual {
   }
 
   // in some special situation (e.g. length change) we need to update in a row
-  // try goiong to render next range by a leading buffer according to current direction
+  // try going to render next range by a leading buffer according to current direction
   handleDataSourcesChange () {
     let start = this.range.start
 
@@ -245,12 +245,12 @@ export default class Virtual {
     const keeps = this.param.keeps
     const total = this.param.uniqueIds.length
 
-    // datas less than keeps, render all
+    // data less than keeps, render all
     if (total <= keeps) {
       start = 0
       end = this.getLastIndex()
     } else if (end - start < keeps - 1) {
-      // if range length is less than keeps, corrent it base on end
+      // if range length is less than keeps, correct it base on end
       start = end - keeps + 1
     }
 
