@@ -131,6 +131,10 @@
           }
 
           this.param[key] = value;
+
+          if (key === 'keeps') {
+            this.checkRange(0, this.param.keeps - 1);
+          }
         }
       } // save each size map by id
 
@@ -138,7 +142,7 @@
       key: "saveSize",
       value: function saveSize(id, size) {
         this.sizes.set(id, size); // we assume size type is fixed at the beginning and remember first size value
-        // if there is no size value different from this at next comming saving
+        // if there is no size value different from this at next coming saving
         // we think it's a fixed size list, otherwise is dynamic size list
 
         if (this.calcType === CALC_TYPE.INIT) {
@@ -161,7 +165,7 @@
           }
         }
       } // in some special situation (e.g. length change) we need to update in a row
-      // try goiong to render next range by a leading buffer according to current direction
+      // try going to render next range by a leading buffer according to current direction
 
     }, {
       key: "handleDataSourcesChange",
@@ -299,17 +303,17 @@
       key: "checkRange",
       value: function checkRange(start, end) {
         var keeps = this.param.keeps;
-        var total = this.param.uniqueIds.length; // datas less than keeps, render all
+        var total = this.param.uniqueIds.length; // data less than keeps, render all
 
         if (total <= keeps) {
           start = 0;
           end = this.getLastIndex();
         } else if (end - start < keeps - 1) {
-          // if range length is less than keeps, corrent it base on end
+          // if range length is less than keeps, correct it base on end
           start = end - keeps + 1;
         }
 
-        if (this.range.start !== start) {
+        if (this.range.start !== start || this.range.end !== end) {
           this.updateRange(start, end);
         }
       } // setting to a new range and rerender
@@ -328,8 +332,7 @@
       key: "getEndByStart",
       value: function getEndByStart(start) {
         var theoryEnd = start + this.param.keeps - 1;
-        var truelyEnd = Math.min(theoryEnd, this.getLastIndex());
-        return truelyEnd;
+        return Math.min(theoryEnd, this.getLastIndex());
       } // return total front offset
 
     }, {
@@ -631,6 +634,9 @@
       },
       offset: function offset(newValue) {
         this.scrollToOffset(newValue);
+      },
+      keeps: function keeps(newValue) {
+        this.virtual.updateParam('keeps', newValue);
       }
     },
     created: function created() {
