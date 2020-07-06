@@ -84,6 +84,10 @@ export default class Virtual {
         })
       }
       this.param[key] = value
+
+      if (key === 'keeps') {
+        this.checkRange(0, this.param.keeps - 1)
+      }
     }
   }
 
@@ -254,7 +258,7 @@ export default class Virtual {
       start = end - keeps + 1
     }
 
-    if (this.range.start !== start) {
+    if (this.range.start !== start || this.range.end !== end) {
       this.updateRange(start, end)
     }
   }
