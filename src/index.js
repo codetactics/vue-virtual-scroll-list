@@ -37,6 +37,10 @@ const VirtualList = Vue.component('virtual-list', {
 
     offset (newValue) {
       this.scrollToOffset(newValue)
+    },
+
+    keeps (newValue) {
+      this.virtual.updateParam('keeps', newValue)
     }
   },
 
