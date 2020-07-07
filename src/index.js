@@ -37,6 +37,10 @@ const VirtualList = Vue.component('virtual-list', {
 
     offset (newValue) {
       this.scrollToOffset(newValue)
+    },
+
+    itemsPerRow (newValue) {
+      this.virtual.updateParam('itemsPerRow', newValue)
     }
   },
 
@@ -198,7 +202,8 @@ const VirtualList = Vue.component('virtual-list', {
         keeps: this.keeps,
         estimateSize: this.estimateSize,
         buffer: Math.round(this.keeps / 3), // recommend for a third of keeps
-        uniqueIds: this.getUniqueIdFromDataSources()
+        uniqueIds: this.getUniqueIdFromDataSources(),
+        itemsPerRow: this.itemsPerRow
       }, this.onRangeChanged)
 
       // sync initial range
@@ -239,7 +244,7 @@ const VirtualList = Vue.component('virtual-list', {
       const clientSize = this.getClientSize()
       const scrollSize = this.getScrollSize()
 
-      // iOS scroll-spring-back behavior will make direction mistake
+      // iOS scroll-spring-back behavior will make direction mistake
       if (offset < 0 || (offset + clientSize > scrollSize + 1) || !scrollSize) {
         return
       }

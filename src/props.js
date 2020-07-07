@@ -82,8 +82,8 @@ export const VirtualProps = {
     type: Object
   },
   itemsPerRow: {
-	type: Number,
-	default: 1
+    type: Number,
+    default: 1
   },
   headerTag: {
     type: String,
