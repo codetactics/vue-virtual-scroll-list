@@ -275,8 +275,7 @@ export default class Virtual {
   // return end base on start
   getEndByStart (start) {
     const theoryEnd = start + this.param.keeps - 1
-    const truelyEnd = Math.min(theoryEnd, this.getLastIndex())
-    return truelyEnd
+    return Math.min(theoryEnd, this.getLastIndex())
   }
 
   // return total front offset
