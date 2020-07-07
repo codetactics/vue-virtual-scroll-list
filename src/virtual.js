@@ -84,6 +84,10 @@ export default class Virtual {
         })
       }
       this.param[key] = value
+
+      if (key === 'itemsPerRow') {
+        this.checkRange(0, this.param.keeps - 1)
+      }
     }
   }
 
@@ -175,7 +179,7 @@ export default class Virtual {
   // return the pass overs according to current scroll offset
   getScrollOvers () {
     // if slot header exist, we need subtract its size
-    const offset = this.offset - this.param.slotHeaderSize
+    const offset = (this.offset - this.param.slotHeaderSize) * this.param.itemsPerRow
     if (offset <= 0) {
       return 0
     }
@@ -278,9 +282,9 @@ export default class Virtual {
   // return total front offset
   getPadFront () {
     if (this.isFixedType()) {
-      return this.fixedSizeValue * this.range.start
+      return this.fixedSizeValue * this.range.start / this.param.itemsPerRow
     } else {
-      return this.getIndexOffset(this.range.start)
+      return this.getIndexOffset(this.range.start) / this.param.itemsPerRow
     }
   }
 
@@ -290,15 +294,15 @@ export default class Virtual {
     const lastIndex = this.getLastIndex()
 
     if (this.isFixedType()) {
-      return (lastIndex - end) * this.fixedSizeValue
+      return (lastIndex - end) * this.fixedSizeValue / this.param.itemsPerRow
     }
 
     // if it's all calculated, return the exactly offset
     if (this.lastCalcIndex === lastIndex) {
-      return this.getIndexOffset(lastIndex) - this.getIndexOffset(end)
+      return (this.getIndexOffset(lastIndex) - this.getIndexOffset(end)) / this.param.itemsPerRow
     } else {
       // if not, use a estimated value
-      return (lastIndex - end) * this.getEstimateSize()
+      return (lastIndex - end) * this.getEstimateSize() / this.param.itemsPerRow
     }
   }
 
