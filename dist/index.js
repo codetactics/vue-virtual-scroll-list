@@ -131,6 +131,10 @@
           }
 
           this.param[key] = value;
+
+          if (key === 'itemsPerRow') {
+            this.checkRange(0, this.param.keeps - 1);
+          }
         }
       } // save each size map by id
 
@@ -226,7 +230,7 @@
       key: "getScrollOvers",
       value: function getScrollOvers() {
         // if slot header exist, we need subtract its size
-        var offset = this.offset - this.param.slotHeaderSize;
+        var offset = (this.offset - this.param.slotHeaderSize) * this.param.itemsPerRow;
 
         if (offset <= 0) {
           return 0;
@@ -336,9 +340,9 @@
       key: "getPadFront",
       value: function getPadFront() {
         if (this.isFixedType()) {
-          return this.fixedSizeValue * this.range.start;
+          return this.fixedSizeValue * this.range.start / this.param.itemsPerRow;
         } else {
-          return this.getIndexOffset(this.range.start);
+          return this.getIndexOffset(this.range.start) / this.param.itemsPerRow;
         }
       } // return total behind offset
 
@@ -349,15 +353,15 @@
         var lastIndex = this.getLastIndex();
 
         if (this.isFixedType()) {
-          return (lastIndex - end) * this.fixedSizeValue;
+          return (lastIndex - end) * this.fixedSizeValue / this.param.itemsPerRow;
         } // if it's all calculated, return the exactly offset
 
 
         if (this.lastCalcIndex === lastIndex) {
-          return this.getIndexOffset(lastIndex) - this.getIndexOffset(end);
+          return (this.getIndexOffset(lastIndex) - this.getIndexOffset(end)) / this.param.itemsPerRow;
         } else {
           // if not, use a estimated value
-          return (lastIndex - end) * this.getEstimateSize();
+          return (lastIndex - end) * this.getEstimateSize() / this.param.itemsPerRow;
         }
       } // get the item estimate size
 
@@ -451,6 +455,10 @@
     },
     itemStyle: {
       type: Object
+    },
+    itemsPerRow: {
+      type: Number,
+      "default": 1
     },
     headerTag: {
       type: String,
@@ -631,6 +639,9 @@
       },
       offset: function offset(newValue) {
         this.scrollToOffset(newValue);
+      },
+      itemsPerRow: function itemsPerRow(newValue) {
+        this.virtual.updateParam('itemsPerRow', newValue);
       }
     },
     created: function created() {
@@ -780,7 +791,8 @@
           estimateSize: this.estimateSize,
           buffer: Math.round(this.keeps / 3),
           // recommend for a third of keeps
-          uniqueIds: this.getUniqueIdFromDataSources()
+          uniqueIds: this.getUniqueIdFromDataSources(),
+          itemsPerRow: this.itemsPerRow
         }, this.onRangeChanged); // sync initial range
 
         this.range = this.virtual.getRange();
@@ -815,7 +827,7 @@
       onScroll: function onScroll(evt) {
         var offset = this.getOffset();
         var clientSize = this.getClientSize();
-        var scrollSize = this.getScrollSize(); // iOS scroll-spring-back behavior will make direction mistake
+        var scrollSize = this.getScrollSize(); // iOS scroll-spring-back behavior will make direction mistake
 
         if (offset < 0 || offset + clientSize > scrollSize + 1 || !scrollSize) {
           return;
