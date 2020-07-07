@@ -205,7 +205,6 @@ const VirtualList = Vue.component('virtual-list', {
         slotFooterSize: 0,
         keeps: this.keeps,
         estimateSize: this.estimateSize,
-        buffer: Math.round(this.keeps / 3), // recommend for a third of keeps
         uniqueIds: this.getUniqueIdFromDataSources(),
         itemsPerRow: this.itemsPerRow
       }, this.onRangeChanged)

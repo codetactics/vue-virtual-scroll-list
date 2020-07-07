@@ -21,6 +21,7 @@ export default class Virtual {
   init (param, callUpdate) {
     // param data
     this.param = param
+    this.param.buffer = this.getBufferSize()
     this.callUpdate = callUpdate
 
     // size data
@@ -48,6 +49,13 @@ export default class Virtual {
 
   destroy () {
     this.init(null, null)
+  }
+
+  getBufferSize () {
+    const buffer = Math.round(this.param.keeps / 3)
+    const mod = buffer % this.param.itemsPerRow
+
+    return mod === 0 ? buffer : buffer + (this.param.itemsPerRow - mod) % this.param.itemsPerRow
   }
 
   // return current render range
@@ -86,7 +94,8 @@ export default class Virtual {
       this.param[key] = value
 
       if (key === 'keeps' || key === 'itemsPerRow') {
-        this.checkRange(0, this.param.keeps - 1)
+        this.param.buffer = this.getBufferSize()
+        this.checkRange(this.range.start, this.param.keeps - 1)
       }
     }
   }
