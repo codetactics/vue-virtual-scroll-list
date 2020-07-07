@@ -62,6 +62,7 @@
       value: function init(param, callUpdate) {
         // param data
         this.param = param;
+        this.param.buffer = this.getBufferSize();
         this.callUpdate = callUpdate; // size data
 
         this.sizes = new Map();
@@ -87,6 +88,13 @@
       key: "destroy",
       value: function destroy() {
         this.init(null, null);
+      }
+    }, {
+      key: "getBufferSize",
+      value: function getBufferSize() {
+        var buffer = Math.round(this.param.keeps / 3);
+        var mod = buffer % this.param.itemsPerRow;
+        return mod === 0 ? buffer : buffer + (this.param.itemsPerRow - mod) % this.param.itemsPerRow;
       } // return current render range
 
     }, {
@@ -133,7 +141,8 @@
           this.param[key] = value;
 
           if (key === 'keeps' || key === 'itemsPerRow') {
-            this.checkRange(0, this.param.keeps - 1);
+            this.param.buffer = this.getBufferSize();
+            this.checkRange(this.range.start, this.param.keeps - 1);
           }
         }
       } // save each size map by id
@@ -791,8 +800,6 @@
           slotFooterSize: 0,
           keeps: this.keeps,
           estimateSize: this.estimateSize,
-          buffer: Math.round(this.keeps / 3),
-          // recommend for a third of keeps
           uniqueIds: this.getUniqueIdFromDataSources(),
           itemsPerRow: this.itemsPerRow
         }, this.onRangeChanged); // sync initial range
