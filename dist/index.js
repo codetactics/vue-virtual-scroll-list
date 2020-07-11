@@ -62,7 +62,6 @@
       value: function init(param, callUpdate) {
         // param data
         this.param = param;
-        this.param.buffer = this.getBufferSize();
         this.callUpdate = callUpdate; // size data
 
         this.sizes = new Map();
@@ -75,9 +74,10 @@
         this.offset = 0;
         this.direction = ''; // range data
 
-        this.range = Object.create(null);
+        this.range = Object.create(null); // Update params
 
         if (param) {
+          this.param.buffer = this.getBufferSize();
           this.checkRange(0, param.keeps - 1);
         } // benchmark test data
         // this.__bsearchCalls = 0

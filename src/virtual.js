@@ -38,7 +38,7 @@ export default class Virtual {
     // range data
     this.range = Object.create(null)
 
-	// Update params
+    // Update params
     if (param) {
       this.param.buffer = this.getBufferSize()
       this.checkRange(0, param.keeps - 1)
