@@ -704,7 +704,9 @@
       },
       // return current scroll offset
       getOffset: function getOffset() {
-        if (this.pageMode) {
+        if (this.scrollProxy) {
+          return this.scrollProxy.scrollOffset;
+        } else if (this.pageMode) {
           return document.documentElement[this.directionKey] || document.body[this.directionKey];
         } else {
           var root = this.$refs.root;
@@ -715,7 +717,9 @@
       getClientSize: function getClientSize() {
         var key = this.isHorizontal ? 'clientWidth' : 'clientHeight';
 
-        if (this.pageMode) {
+        if (this.scrollProxy) {
+          return this.scrollProxy.clientSize;
+        } else if (this.pageMode) {
           return document.documentElement[key] || document.body[key];
         } else {
           var root = this.$refs.root;
@@ -726,7 +730,9 @@
       getScrollSize: function getScrollSize() {
         var key = this.isHorizontal ? 'scrollWidth' : 'scrollHeight';
 
-        if (this.pageMode) {
+        if (this.scrollProxy) {
+          return this.scrollProxy.scrollSize;
+        } else if (this.pageMode) {
           return document.documentElement[key] || document.body[key];
         } else {
           var root = this.$refs.root;
@@ -833,7 +839,11 @@
       onRangeChanged: function onRangeChanged(range) {
         this.range = range;
       },
-      onScroll: function onScroll(evt) {
+      onScroll: function onScroll(event) {
+        if (event.detail) {
+          this.scrollProxy = event.detail;
+        }
+
         var offset = this.getOffset();
         var clientSize = this.getClientSize();
         var scrollSize = this.getScrollSize(); // iOS scroll-spring-back behavior will make direction mistake
@@ -843,7 +853,7 @@
         }
 
         this.virtual.handleScroll(offset);
-        this.emitEvent(offset, clientSize, scrollSize, evt);
+        this.emitEvent(offset, clientSize, scrollSize, event);
       },
       // emit event in special position
       emitEvent: function emitEvent(offset, clientSize, scrollSize, evt) {
