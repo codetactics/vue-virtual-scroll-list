@@ -106,7 +106,9 @@ const VirtualList = Vue.component('virtual-list', {
 
     // return current scroll offset
     getOffset () {
-      if (this.pageMode) {
+      if (this.scrollProxy) {
+        return this.scrollProxy.scrollOffset
+      } else if (this.pageMode) {
         return document.documentElement[this.directionKey] || document.body[this.directionKey]
       } else {
         const { root } = this.$refs
@@ -117,7 +119,9 @@ const VirtualList = Vue.component('virtual-list', {
     // return client viewport size
     getClientSize () {
       const key = this.isHorizontal ? 'clientWidth' : 'clientHeight'
-      if (this.pageMode) {
+      if (this.scrollProxy) {
+        return this.scrollProxy.clientSize
+      } else if (this.pageMode) {
         return document.documentElement[key] || document.body[key]
       } else {
         const { root } = this.$refs
@@ -128,7 +132,9 @@ const VirtualList = Vue.component('virtual-list', {
     // return all scroll size
     getScrollSize () {
       const key = this.isHorizontal ? 'scrollWidth' : 'scrollHeight'
-      if (this.pageMode) {
+      if (this.scrollProxy) {
+        return this.scrollProxy.scrollSize
+      } else if (this.pageMode) {
         return document.documentElement[key] || document.body[key]
       } else {
         const { root } = this.$refs
@@ -242,7 +248,11 @@ const VirtualList = Vue.component('virtual-list', {
       this.range = range
     },
 
-    onScroll (evt) {
+    onScroll (event) {
+      if (event.detail) {
+        this.scrollProxy = event.detail
+      }
+
       const offset = this.getOffset()
       const clientSize = this.getClientSize()
       const scrollSize = this.getScrollSize()
@@ -253,7 +263,7 @@ const VirtualList = Vue.component('virtual-list', {
       }
 
       this.virtual.handleScroll(offset)
-      this.emitEvent(offset, clientSize, scrollSize, evt)
+      this.emitEvent(offset, clientSize, scrollSize, event)
     },
 
     // emit event in special position
